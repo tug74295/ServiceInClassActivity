@@ -65,9 +65,11 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_start -> onStartButtonClick()
             R.id.action_stop -> onStopButtonClick()
+            else -> return false
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
+
     private fun onStartButtonClick() {
         if (isConnected) timerBinder.start(
             startValue = 100
