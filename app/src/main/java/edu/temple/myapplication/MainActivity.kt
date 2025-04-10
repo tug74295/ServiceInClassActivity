@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+
     private fun onStartButtonClick() {
         if (isConnected) timerBinder.start(
             startValue = 100
