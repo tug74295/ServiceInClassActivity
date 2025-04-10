@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 
@@ -37,15 +39,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         timerTextView = findViewById(R.id.textView)
         findViewById<Button>(R.id.startButton).setOnClickListener {
-            if (isConnected) timerBinder.start(
-                startValue = 100
-            )
+            onStartButtonClick()
         }
 
         findViewById<Button>(R.id.stopButton).setOnClickListener {
-            if (isConnected) timerBinder.stop()
+            onStopButtonClick()
         }
-
         bindService(
             Intent(this, TimerService::class.java),
             serviceConnection,
@@ -56,4 +55,28 @@ class MainActivity : AppCompatActivity() {
         unbindService(serviceConnection)
         super.onDestroy()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_start -> onStartButtonClick()
+            R.id.action_stop -> onStopButtonClick()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+    private fun onStartButtonClick() {
+        if (isConnected) timerBinder.start(
+            startValue = 100
+        )
+
+    }
+
+    private fun onStopButtonClick() {
+        if (isConnected) timerBinder.stop()
+    }
+
 }
