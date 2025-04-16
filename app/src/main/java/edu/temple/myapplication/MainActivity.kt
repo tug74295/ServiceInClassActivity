@@ -12,6 +12,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
     lateinit var timerTextView: TextView
@@ -34,9 +36,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val saveFile = "countdown"
+    private lateinit var file: File
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        file = File(filesDir, saveFile)
         timerTextView = findViewById(R.id.textView)
         findViewById<Button>(R.id.startButton).setOnClickListener {
             onStartButtonClick()
@@ -72,14 +77,25 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun onStartButtonClick() {
-        if (isConnected) timerBinder.start(
-            startValue = 100
-        )
-
+        if (isConnected) {
+            var startValue = 100
+            if (file.exists()) {
+                startValue = file.readText().toInt()
+                file.delete()
+            }
+            timerBinder.start(startValue)
+        }
     }
 
     private fun onStopButtonClick() {
         if (isConnected) timerBinder.stop()
+        try {
+            val outputStream = FileOutputStream(file)
+            outputStream.write(timerTextView.text.toString().toByteArray())
+            outputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }
